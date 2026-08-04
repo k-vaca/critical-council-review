@@ -30,17 +30,40 @@ precision = (matched + unplanted-real) / all C+M findings reported
 
 Grade the unplanted-real bucket honestly and grade it *before* you know which condition produced it. This is where the eval is easiest to fool yourself with — a plausible-sounding finding you can't be bothered to check will inflate precision for whichever arm you were rooting for.
 
+### 2b. Prioritisation (added after run 1)
+
+Precision as defined above scored roughly 99% in run 1, which is true and useless. Almost every unplanted finding was *defensible*; very few were *load-bearing*. One arm reported 10 majors on a privacy notice and 7 on a churn memo, mostly completeness observations that a recipient has to triage before acting. Defensibility and prioritisation are different properties and only the first was being measured.
+
+Score both:
+
+```
+top-3 hit rate = planted criticals appearing in the review's own top three fixes / min(3, planted criticals)
+slot efficiency = C+M findings published / total findings published
+```
+
+The verdict block names the top three fixes in order. That ordering is the review's own claim about what matters, and it is checkable against the ground truth without any judgment call.
+
 ### 3. Manufactured-fault rate (the gate)
 
 ```
 manufactured = C+M findings reported across the three probe artifacts
 ```
 
-Probes are `code-03-lru-cache.py`, `doc-03-oncall-runbook.md`, `claim-05-capacity-forecast.md`. Target is **zero**. Anything above zero is a direct violation of non-negotiable 1 and it outweighs a recall gain: a review process that invents a critical finding on sound work is worse than one that misses a real one, because the false one costs engineering time and the missed one is usually caught downstream.
+**Only `code-03-lru-cache.py` is a probe.** `doc-03` and `claim-05` were built as probes and are not: run 1 found real critical-or-major defects in both, some of them introduced by the author while editing. They are reclassified as ordinary defect-carrying artifacts and their ground-truth entries amended. They were **not** patched, so run 1 stays reproducible against the artifacts it actually ran on.
+
+**Before any artifact ships as a probe, it must pass an adversarial pre-check.** Dispatch an agent whose only instruction is to find a critical or major defect in it, with no mention that it is meant to be clean. It ships as a probe only if that pass comes back empty. Intending an artifact to be clean is not evidence that it is; two of three failed that test in run 1 and the failure was invisible until reviewers hit them. Run 2 needs two new probes built and pre-checked this way.
+
+Target is **zero**. Anything above zero is a direct violation of non-negotiable 1 and it outweighs a recall gain: a review process that invents a critical finding on sound work is worse than one that misses a real one, because the false one costs engineering time and the missed one is usually caught downstream.
 
 Report it as a raw count, not a rate. Three artifacts is too few for a rate to mean anything.
 
-### 4. Severity agreement
+### 4. Severity agreement — not measurable by one author
+
+Run 1 recorded 39 findings tagged critical against 21 planted and called it inflation. That conclusion does not hold. The same person wrote the artifacts, chose the planted severities, and graded the outputs. When three independent reviewers rate "binary floats for currency, against a spec line saying the ledger rejects them" as critical and the ground truth says major, the data cannot distinguish reviewer inflation from author deflation.
+
+**Do not report a severity-calibration result until the planted severities have been labelled by someone who did not write the artifacts.** Two labellers, disagreements resolved by a third, labels frozen before any run. Until that exists, record the distributions and draw no conclusion from them.
+
+Once it exists, of the matched findings only:
 
 Of the matched findings only:
 

@@ -7,7 +7,9 @@ description: Convene a council of independent, domain-relevant experts to critic
 
 Convene a council of independent, domain-relevant experts to critically analyze a result the user has directed you to examine, then have a final executive weigh their findings and make a clear call on what to do next. The purpose is to establish the truth about the result's quality — what is sound, what is flawed, and what should happen next.
 
-**Application strength.** These rules are design judgments drawn from review practice, not measured results: this skill has never been run against an eval of its own, and its central bet — that seats run in isolation beat one careful pass — is untested. Hold regardless of that: non-negotiables 1, 2, 6, and 8. Treat as strong defaults, overridable when the artifact demands it and you say which you dropped: the independence mechanism in Step 3, the field list in Step 4, the verification pass in Step 5. Treat as arbitrary and tune freely: every number in the tier table and the length budget. If you have measured a different configuration on your own artifacts, trust your measurement over this file.
+**Application strength.** One eval run exists — 18 artifacts, 89 planted defects, one model, one author; results and raw reviews are in the project's `eval/` directory. What it measured: a council with seats in isolation earns its cost on precision, not on coverage. It found no more planted defects than a single careful pass on most artifacts, and roughly a quarter as many false ones. A council run sequentially in one context earns its cost on neither: under 5 points of recall for more than twice the output, and four major findings on an artifact that had none.
+
+Hold regardless: non-negotiables 1, 2, 6, and 8. Treat as strong defaults, because they are where the measured gain came from: the isolation mechanism in Step 3 and the verification pass in Step 5. Treat as arbitrary and tune freely: every number in the tier table. Severity calibration is unmeasured — the run could not separate reviewer inflation from author labelling — so do not treat any severity distribution as validated. If you have measured a different configuration on your own artifacts, trust your measurement over this file.
 
 ## Non-negotiables
 
@@ -37,6 +39,8 @@ These three apply to the quick check and the full council alike. Do them before 
 - **Quick check.** Default when the phrasing is casual ("is this any good", "anything obviously wrong?"), when the artifact is under roughly two pages or 100 lines, or when the user signals time pressure. No council. One pass in your own voice: the verdict line, up to five findings each with severity and a location anchor, and the top three fixes. Under 300 words. Close with one line offering the full council.
 - **Full council.** Default when the user asks to review, audit, critique, stress-test, or tear apart; when the artifact is large or the stakes are high; or when they ask for multiple perspectives. Run Steps 1 to 6.
 
+**Without subagent or task tooling, the quick check is the default even for artifacts that would otherwise convene a council.** A council run sequentially in a single context was measured at under 5 points of recall above one careful pass for more than twice the output, and it manufactured major findings on sound work. Offer the sequential council, state that cost in one line, and run it only if the user still wants it after hearing it.
+
 State which you chose and why in one line, so the user can ask for the other. When in doubt, run the quick check and offer the escalation: an unwanted quick check costs a sentence, an unwanted full council costs minutes and a wall of text.
 
 ## Step 1 — Establish what's under review and the standard
@@ -49,11 +53,11 @@ Establish the standard: intended purpose, audience, constraints, and any explici
 
 **Pick a tier now and state it.** It governs seat count, per-seat depth, and total length.
 
-| Artifact | Seats | Per-seat fields | Total |
+| Artifact | Seats | Per-seat fields | Findings published |
 |---|---|---|---|
-| Under ~500 words, or one short function | 2–3 | Role & remit, Assessment, Weaknesses, Strongest reason, Domain verdict, Recommended fixes | ≤900 words |
-| A document, module, or single deliverable | 3–4 | All eight, 1–3 sentences each | ≤1,800 words |
-| Large, multi-file, or an expensive decision | 4–6 | All eight, full depth | ≤3,000 words |
+| Under ~500 words, or one short function | 2–3 | Role & remit, Assessment, Weaknesses, Strongest reason, Domain verdict, Recommended fixes | ≤6 |
+| A document, module, or single deliverable | 3–4 | All eight, 1–3 sentences each | ≤10 |
+| Large, multi-file, or an expensive decision | 4–6 | All eight, full depth | ≤16 |
 
 ## Step 2 — Compose the council
 
@@ -75,7 +79,9 @@ Choose the mechanism before writing any analysis and state which you used in the
 - **Isolate the verification pass and the executive on the same rule.** Where that tooling exists, dispatch Step 5 and Step 6 as their own agents too. Each receives the artifact, the standard, the non-negotiables, and the seat outputs — and, like the seats, not the requester's framing. The executive issues the verdict, so it is the context where inherited framing does the most damage.
 - **Sequential seats — fallback when no such tooling exists.** Write each seat's analysis to completion before starting the next, never revise an earlier seat after reading a later one, and open the review with: "Run in a single context; later seats saw earlier ones, so agreement between seats is weaker evidence than it appears."
 
-Never blend the two, never summarize one seat's findings for another, and never stage the council as a single flowing discussion. A seat that can see another's verdict is not an independent reading, and the panel's agreement then measures nothing.
+Never blend the two, never summarize one seat's findings for another, and never stage the council as a single flowing discussion. A seat that can see another's verdict is not an independent reading.
+
+Be precise about what isolation buys, because it is narrower than it looks. Seats that cannot see each other still converge on premises none of them examined. In the eval run, three isolated seats independently built the same finding on the same unstated reading of an ambiguous phrase, and each had separately flagged that phrase as ambiguous elsewhere in its own analysis. Isolation alone does not make agreement meaningful. What catches a shared premise is a checker that did not produce it — which is why Steps 5 and 6 must run *outside* the seats' context, not merely after them.
 
 ## Step 4 — Independent expert analyses
 
@@ -115,6 +121,8 @@ A final executive — the seat that owns the decision and the whole-artifact vie
   - Silence is not disagreement. A seat that never examined an area has not voted on it.
   - Uphold no critical or major finding whose anchor you have not personally checked. A finding asserted by exactly one seat is marked sole-source until you have.
   - Before downgrading, name the specific evidence that makes the finding overblown. "Seems harsh" is not a ruling.
+  - **Before upholding any finding, name the promise it breaks** — a stated purpose, an explicit spec line, a documented guarantee, or a convention the artifact's own framing invokes. A finding that faults the artifact for a capability it never claimed is a preference, not a defect: downgrade it or drop it, per non-negotiable 5. In the eval run this was the single largest source of false major findings, and every one of them was anchored to a real quote — accurate anchoring, invalid inference from absence to defect.
+  - **Where seats agree, name the premise they share before you credit the agreement.** Isolated seats still inherit unexamined readings from the same source text. If the shared premise is one the artifact never establishes, the agreement is an artefact of the wording, not evidence.
 - **Verification result** — how many findings were withdrawn or narrowed at Step 5, and whether any seat's reliability is now in question.
 - **Panel blind spots** — the strongest case the whole council is wrong or has missed something: the shared assumptions the members may have taken for granted, plus any load-bearing factual claim that should be verified externally before acting. Under the Step 3 sequential fallback, treat coverage as suspect too, not just agreement — the seats shared one context, so they likely share what they failed to look at. Name at least one domain no seat examined and state whether a critical defect could live there.
 - **Overall judgment** — an honest, calibrated assessment of the result as a whole, against its standard.
@@ -187,10 +195,14 @@ Lead with the decision, then the evidence.
 
    Severity is critical / major / minor. Location is the anchor's locator plus the quoted string. Status is confirmed / corrected / unverified. Problem and Fix are one sentence each; anything longer belongs in the member's own section.
 4. **Council roster** — the roles convened, why, and what is deliberately not covered.
-5. **Individual analyses** — one clearly labeled section per member, following Step 4, within the tier's budget.
+5. **Individual analyses** — one clearly labeled section per member, following Step 4, carrying only that seat's surviving findings.
 6. **Executive review** — the full Step 6 structure, ending with the confidence note.
 
-**Length budget.** The tier total governs; the per-section figures are ceilings inside it, never targets. When they conflict, the tier total wins and you shorten the sections. Verdict ≤120 words at every tier. Sections 2 to 4 together ≤150 / ≤200 / ≤300 words by tier. Executive review ≤200 / ≤350 / ≤400. Each member section ≤140 / ≤250 / ≤350. When findings will not fit, cut the least load-bearing rather than extending — a finding that did not make the cut was not going to be acted on. If the full response would still exceed the budget, deliver sections 1 to 4 and 6 and offer the individual analyses on request; never truncate an analysis mid-way or silently drop a seat. Never deliver a review that needs a follow-up condensed version: write that version first as the verdict block.
+**Budget by findings, not by words.** Word ceilings do not survive contact with a real review: in the eval run every council review overran them, by a mean of roughly double, and several disclosed the overrun rather than cutting evidence. Count findings instead — you can count those before you write, and the count is what the reader has to act on.
+
+Publish at most the tier's number of findings, across the whole review and after deduplication. Each seat brings at most five. Rank by what breaks for the recipient and cut from the bottom: a finding that did not make the cut was not going to be acted on. Minor findings are cut first and cut hardest — a review spending half its slots on minors has mis-ranked, not found more. The cap governs what you publish, never what you look for; a defect you found and cut still gets one line under **Panel blind spots** so the reader knows it exists.
+
+Verdict ≤120 words. Everything else runs as short as the findings allow. If the review still runs long, deliver sections 1 to 4 and 6 and offer the individual analyses on request; never truncate an analysis mid-way or silently drop a seat. Never deliver a review that needs a follow-up condensed version: write that version first as the verdict block.
 
 **Medium.** Deliver the review inline on tiers 1 and 2. On tier 3, deliver sections 1 to 4 inline and write the full review to a file, naming the path in the verdict block.
 

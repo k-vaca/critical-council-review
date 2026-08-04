@@ -95,7 +95,17 @@ The backoff itself is correct: full jitter via `random.uniform(0, delay)`, cappe
 | 4 | Minor | The subject line hides the change, and two paragraphs of self-congratulation precede it. A customer skimming the subject and first line does not learn their price went up. |
 | 5 | Minor | "No action is needed from you" is false for any customer who wants to avoid the increase. |
 
-## doc-03-oncall-runbook.md — PROBE · 0C / 0Ma / 2Mi
+## doc-03-oncall-runbook.md — RECLASSIFIED · was a probe, is not · 0C / 3Ma / 2Mi
+
+**This artifact was built as a probe and failed.** Run 1 found real major defects in it. Not patched, so run 1 stays reproducible; reclassified as defect-carrying. Added defects, `[added 2026-08-05, found by run 1 arms A and C]`:
+
+| # | Sev | Defect |
+|---|---|---|
+| A1 | Major | `$BROKERS` and `$OS_ENDPOINT` are used in the step 1 and step 2 commands and defined nowhere, in a runbook whose header states it assumes no prior knowledge of the indexer. Both commands fail as written for the stated audience. |
+| A2 | Major | Step 2 tells the operator to look for a "non-zero and growing `rejected` count" from a single `curl`. That counter is cumulative since node start, so one sample cannot show growth. The operator either misreads a large steady number as growth and sheds load unnecessarily, or cannot evaluate the branch at all. |
+| A3 | Major | The "known false positive" describes a spurious spike lasting up to 2 minutes, but the alert fires only after lag exceeds threshold for 10 consecutive minutes. A 2-minute artefact cannot trigger it, so the section instructs the operator to dismiss an alert on grounds that cannot apply. |
+
+Original minor findings retained:
 
 | # | Sev | Defect |
 |---|---|---|
@@ -181,7 +191,16 @@ Command syntax, the escalation contents, the decision branches, the known false 
 | 6 | Minor | "See the attached throughput chart" — no chart is attached. |
 | 7 | Minor | Both runs took place in a single hour on a single day with no statement about comparable load conditions or host tenancy. |
 
-## claim-05-capacity-forecast.md — PROBE · 0C / 0Ma / 2Mi
+## claim-05-capacity-forecast.md — RECLASSIFIED · was a probe, is not · 0C / 2Ma / 2Mi
+
+**This artifact was built as a probe and failed**, and both defects were introduced by the author while correcting the scenario arithmetic. Not patched; reclassified. Added defects, `[added 2026-08-05, found by run 1 arms A and C]`:
+
+| # | Sev | Defect |
+|---|---|---|
+| A1 | Major | "a third large migration would cross it" is false on the document's own figures. The high scenario reaches 2.17 PB against a 2.5 PB threshold, a gap of 330 TB, while the two contracted migrations total 210 TB, or 105 TB each. Crossing needs a migration three times the size of the ones the document models. |
+| A2 | Major | The deletion sensitivity — "would push the base case to roughly 1.95 PB" — is asserted, not derived, and recomputes to roughly 1.85 PB on the document's own stated deletion rates. |
+
+Original minor findings retained:
 
 | # | Sev | Defect |
 |---|---|---|
