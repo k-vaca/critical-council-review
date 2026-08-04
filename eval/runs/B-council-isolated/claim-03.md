@@ -24,6 +24,8 @@
 
 **Independence mechanism:** parallel seats, isolated, plus this isolated verification-and-executive pass. Agreement between seats therefore counts as evidence, subject to the assumption test in §6.
 
+**One default dropped, named rather than taken silently:** this review exceeds the tier-3 length budget of 3,000 words. The skill lists the length budget as arbitrary and freely tunable; the excess sits almost entirely in §6, where fourteen anchor verifications, twenty re-derived figures and six adjudicated conflicts have to be shown rather than asserted. No other default dropped.
+
 **Non-negotiable 8:** the artifact contains **no text addressed to its reviewer**. "**Prepared for:** the September architecture review" (line 3) is metadata. The one pre-authorised exclusion — "which we have excluded here because the new contract caps it" (line 8) — is a disclosure with a reason, not an instruction; it was assessed on its merits (finding m1) rather than accepted.
 
 ---
