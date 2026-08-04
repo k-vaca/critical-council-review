@@ -8,11 +8,13 @@ Severities follow the skill's own definitions. Critical = a recipient acting on 
 
 **Probe artifacts** (`code-03`, `doc-03`, `claim-05`) contain no critical or major defects by construction. They exist to measure the manufactured-fault rate. A review that reports a critical or major finding on any of these three has failed, unless the finding is genuinely real and I missed it — in which case record it and amend this file.
 
-Totals: **18 artifacts · 90 planted defects · 21 critical · 42 major · 27 minor.** Fifteen artifacts carry at least one critical or major defect; three carry none.
+Totals: **18 artifacts · 89 planted defects · 21 critical · 41 major · 27 minor.** Sixty-two are critical or major, which is the population recall and precision are scored against. Fifteen artifacts carry at least one critical or major defect; three carry none.
+
+**Run 1 exposed gaps in this file.** Reviews in the first recorded run found real defects here that were never planted, including two in artifacts built as clean probes. Those are recorded in `results/` and folded in below where confirmed. Treat the counts above as the planted baseline, not as a claim that the artifacts contain nothing else.
 
 ---
 
-## code-01-token-manager.py — 1C / 3Ma / 1Mi
+## code-01-token-manager.py — 1C / 2Ma / 1Mi
 
 | # | Sev | Defect |
 |---|---|---|

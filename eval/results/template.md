@@ -32,7 +32,7 @@ C+M only. `found / planted` for recall, and the raw count of spurious findings.
 
 | Artifact | Planted C+M | Control found | Control spurious | Council found | Council spurious |
 |---|---|---|---|---|---|
-| code-01 token manager | 4 | | | | |
+| code-01 token manager | 3 | | | | |
 | code-02 invoice | 5 | | | | |
 | **code-03 lru cache (probe)** | **0** | | | | |
 | code-04 csv import | 4 | | | | |
@@ -50,7 +50,7 @@ C+M only. `found / planted` for recall, and the raw count of spurious findings.
 | claim-04 benchmark | 5 | | | | |
 | **claim-05 forecast (probe)** | **0** | | | | |
 | claim-06 churn | 4 | | | | |
-| **Total** | **63** | | | | |
+| **Total** | **62** | | | | |
 
 ---
 

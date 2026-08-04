@@ -28,7 +28,7 @@ Eighteen artifacts, six per domain, sized across tiers 1 and 2.
 | | `code-05` auth middleware | `doc-05` database migration plan | `claim-05` capacity forecast **(probe)** |
 | | `code-06` retry helper | `doc-06` job posting | `claim-06` churn analysis |
 
-90 planted defects: 21 critical, 42 major, 27 minor.
+89 planted defects: 21 critical, 41 major, 27 minor. 62 of them are critical or major, which is the population recall and precision score against.
 
 Three of the eighteen are **probes** — artifacts with no critical or major defect in them at all. They are there because recall alone rewards a reviewer for reporting everything it can think of, and the failure mode people actually hit with review tools is a wall of confident findings that waste an afternoon. `claim-05` in particular is deliberately the most carefully-reasoned document in the set: a reviewer that manufactures faults will manufacture them there.
 
