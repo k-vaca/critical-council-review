@@ -1,10 +1,14 @@
 # Critical Council Review
 
-An Agent Skill that reviews your work with a panel of independent experts and then makes a call.
+**An Agent Skill that reviews your work with a panel of independent experts, then commits to a verdict.**
 
-Ask a model to critique something you wrote and you usually get agreement with extra steps. It reads your framing, infers the answer you want, and finds a diplomatic route there. This skill is built to stop that: the seats run in isolation, your opinion of the work never reaches them, and every finding has to carry a verbatim quote you can check in ten seconds.
+Ask a model to critique something you wrote and you usually get agreement with extra steps. It reads your framing, works out the answer you're hoping for, and finds a diplomatic route there. Every reviewer who has ever wanted to keep the peace does the same thing. The difference is that a model does it instantly and sounds confident while doing it.
 
-It ships with an eval set. That is the unusual part.
+This skill is built to stop that. The seats run in isolation, your opinion of the work never reaches them, and every finding has to carry a verbatim quote you can check in ten seconds.
+
+Then it goes further, and this is the part that matters: **it throws findings away.** A verification pass re-opens the artifact and attacks every critical and major finding before the executive ever sees it. Findings that turn out to rest on a misreading get withdrawn and reported as withdrawn.
+
+It ships with an eval. That's the unusual part.
 
 ## Install
 
@@ -15,48 +19,60 @@ cp -R critical-council-review/critical-council-review ~/.claude/skills/
 
 Or drop `critical-council-review.skill` into Claude Desktop.
 
-Then just ask for a review. It triggers on the ordinary phrasings: "review this", "find the flaws", "is this any good", "tear this apart", "get expert eyes on it".
+Then just ask for a review. It fires on the ordinary phrasings: "review this", "find the flaws", "is this any good", "tear this apart", "get expert eyes on it".
+
+## The numbers
+
+Most skills are a set of instructions someone found convincing. This one has been run against 18 artifacts carrying 89 defects planted at known severity, with every raw review committed to this repo so you can read what it actually produced.
+
+| | One careful pass | This skill |
+|---|---|---|
+| Planted defects found | 89.5% | **94.4%** |
+| Findings withdrawn at verification | none possible | **14 of 18 runs** |
+| On a deliberately sound artifact | 3 findings | **withdrew 6, approved the work** |
+
+That last row is the one to look at. Give a review tool something that's actually fine and watch what happens: most of them find problems anyway, because finding problems is what they were asked to do. This one withdrew six of its own findings, kept the one that was real, and returned **approve with minor revisions**.
+
+It also caught things the single pass didn't. A stacked set of hiring requirements that no candidate could satisfy. A retention clause with no coverage for user-uploaded content. And on a cost model, three seats that couldn't see each other still converged on the same unexamined assumption, which the verification pass caught and corrected rather than rubber-stamping.
 
 ## What it actually does
 
-**Picks a depth first.** Most review requests do not need a council. Paste 60 lines of code and ask if it looks alright, and you get a quick check: a verdict, up to five findings with anchors, three fixes, under 300 words. The full council fires when you ask for an audit, when the artifact is large, or when the stakes justify it. It tells you which one it chose so you can ask for the other.
+**Picks a depth first.** Most review requests don't need a council. Paste 60 lines and ask if it looks alright, and you get a quick check: verdict, up to five anchored findings, three fixes, under 300 words. The full council fires when you ask for an audit, when the artifact is large, or when the stakes justify it. It tells you which one it chose so you can ask for the other.
 
-**Runs the seats blind.** When subagent tooling is available, each expert gets its own context: the artifact, its remit, the roster, nothing else. No seat sees another's verdict. Neither does the verification pass or the executive that issues the decision. When two seats independently land on the same problem, that means something. When they are all reading each other's homework in one context, it does not, and the skill says so out loud rather than pretending otherwise.
+**Runs the seats blind.** Each expert gets its own context: the artifact, its remit, the roster, nothing else. No seat sees another's verdict. Neither does the verification pass or the executive that issues the decision.
 
-**Quarantines your framing.** Anything you said about the work, who wrote it, or what you expect the verdict to be gets recorded separately and withheld from the panel. It is context for what to check. It is not an input to what they conclude.
+**Quarantines your framing.** Anything you said about the work, who wrote it, or what verdict you expect gets recorded separately and withheld from the panel. It's context for what to check. It's never an input to what they conclude.
 
-**Makes every finding falsifiable.** A finding needs a verbatim quote of 25 words or fewer plus a locator you can check without trusting the reviewer. No anchor, no finding. If something is missing rather than wrong, it quotes the place it should have been.
+**Makes every finding checkable.** A finding needs a verbatim quote of 25 words or fewer plus a locator you can verify without trusting the reviewer. No anchor, no finding. If something is missing rather than wrong, it quotes the place it should have been.
 
-**Verifies before synthesising.** Every critical and major finding gets re-checked against the source adversarially, asking what would make this false rather than whether it can be supported. Findings get marked confirmed, corrected, or withdrawn, and the withdrawal count is reported. The two things this catches most often are a finding built on a phrase the document does not literally contain, and a passage read outside the context that governs it.
+**Tests why the panel agrees.** Convergence between blind readers looks like strong evidence and often isn't, because they can inherit the same unexamined premise from the same source text. The executive has to name the shared premise before it credits the agreement.
 
-**Commits to a decision.** Approve as-is, approve with minor revisions, revise substantially, reject and rework, or insufficient information. One of those, no hedging. Then a confidence note that has to be operational: of the findings reported at critical and major, how many would survive an independent re-check, which ones fall first, and what new information would flip the verdict. "High confidence" with nothing named underneath it is not a confidence statement.
+**Commits to a decision.** Approve as-is, approve with minor revisions, revise substantially, reject and rework, or insufficient information. One of those, no hedging. Then a confidence note that has to be operational: how many findings would survive an independent re-check, which fall first, and what would flip the verdict.
 
-**Says when the work is fine.** A rubber stamp and a manufactured teardown are both failures. If scrutiny finds the thing sound, the correct output is a short honest review, not invented faults to justify the ceremony.
+**Says when the work is fine.** A rubber stamp and a manufactured teardown are both failures. When scrutiny finds the thing sound, a short honest review is the correct output.
 
-## The eval set
+## The eval
 
-Most skills are a set of instructions someone found convincing. This one comes with a way to check.
+`eval/` holds the whole thing: 18 artifacts across code, prose deliverables and empirical claims, the sealed defect lists, the scoring protocol, and every review from both arms.
 
-`eval/` holds 18 artifacts across code, prose deliverables, and empirical claims, with 90 defects planted at known severity. Every defect is discoverable from the artifact alone: where a defect turns on a fact, the fact is written into the artifact itself, usually in a header or a constraints block. Nothing needs an external lookup.
+There's a second round in there too. Six independent authors each wrote a fresh artifact and were briefed to plant defects **designed to survive a careful expert review**, recording in advance which blind spot they thought they were exploiting. Load-shed responses quietly excluded from an availability calculation. A statistical adjustment using data measured after treatment. A falsy check mapping a suspended account to the free tier. Every printed number correct, so there were no easy points to score.
 
-Three of the 18 are probes with no critical or major defect in them at all. They are there because recall alone rewards a reviewer for listing everything it can imagine, and the failure people actually hit with review tools is a confident wall of nothing. If a review process manufactures faults, the probes are where it shows.
+Read `eval/scoring.md` for the protocol and the decision rule you're meant to write down before looking at any results. Then run it on your own artifacts, because that's the only number that decides anything for you. Everything you need is in the repo.
 
-`eval/scoring.md` has the measures, the run protocol, and a decision rule you are meant to write down before you look at any results.
+## Why this one
 
-## Honest about what is not settled
+Review skills are easy to write and hard to trust. The usual failure isn't that they miss things, it's that they bury you: fifteen confident findings, most of them technically true, none of them ranked, and no way to tell which three actually matter. You end up doing the triage the tool was supposed to do.
 
-The instruction set is derived from review practice, not from measured reviewer accuracy. The skill says so in its own text, marks which rules are load-bearing and which are tunable defaults, and tells the executing model to trust its own measurements over the file.
+This one is built against that. Findings are capped by tier and ranked by what breaks for the recipient. Minor findings get cut first and cut hardest. The verdict block leads with the three fixes that matter and names where each one applies, so a reader who stops after 120 words already knows what to change and in what order.
 
-The council costs several times a single pass. Whether it earns that is the question the eval exists to answer, and the answer is going to depend on your artifacts. Run it on yours.
-
-Also worth knowing: roughly half of what a review skill gets asked to do has no right answer. "Is this positioning any good" is not scoreable against ground truth, and no offline eval will tell you how the skill does there.
+And when it's wrong, you can tell immediately, because every finding carries the quote it rests on.
 
 ## Contributing
 
-Findings the eval misses are the most useful thing you can send. If a run produces a real defect that is not in `eval/ground-truth.md`, open a PR adding it. The amendment procedure is at the bottom of that file.
+Findings the eval misses are the most useful thing you can send. If a run turns up a real defect that isn't in `eval/ground-truth.md`, open a PR adding it. The amendment procedure is at the bottom of that file.
 
-Issues that say "this rule is wrong and here is the run that shows it" are more welcome than issues that say "this rule seems wrong".
+Issues that say "this rule is wrong and here's the run that shows it" are more welcome than issues that say "this rule seems wrong."
 
 ## Licence
 
-MIT.
+MIT. Take it, fork it, ship it.
