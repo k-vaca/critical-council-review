@@ -9,7 +9,11 @@ Convene a council of independent, domain-relevant experts to critically analyze 
 
 **Application strength.** One eval run exists — 18 artifacts, 89 planted defects, one model, one author; results and raw reviews are in the project's `eval/` directory. What it measured: a council with seats in isolation earns its cost on precision, not on coverage. It found no more planted defects than a single careful pass on most artifacts, and roughly a quarter as many false ones. A council run sequentially in one context earns its cost on neither: under 5 points of recall for more than twice the output, and four major findings on an artifact that had none.
 
-Hold regardless: non-negotiables 1, 2, 6, and 8. Treat as strong defaults, because they are where the measured gain came from: the isolation mechanism in Step 3 and the verification pass in Step 5. Treat as arbitrary and tune freely: every number in the tier table. Severity calibration is unmeasured — the run could not separate reviewer inflation from author labelling — so do not treat any severity distribution as validated. If you have measured a different configuration on your own artifacts, trust your measurement over this file.
+A second run tested whether that recall figure was soft. Six independent authors wrote fresh artifacts, each briefed to plant defects *designed to survive a careful expert review*, each recording in advance which reviewer blind spot it believed it was exploiting. A single careful pass found **18 of 18**. Every prediction of a miss was wrong.
+
+Read that as a constraint on this skill, not a compliment to it: **on recall there is close to no headroom for a council to occupy.** The case for convening one rests on precision and on catching the shared premise a lone reader will not question — nothing else in either run supports it.
+
+Hold regardless: non-negotiables 1, 2, 6, and 8. Treat as strong defaults, because they are where the measured gain came from: the isolation mechanism in Step 3 and the verification pass in Step 5. Treat as arbitrary and tune freely: every number in the tier table. **Severity is contested, not merely unmeasured**: when severities were labelled independently, the reviewer's ordering and the author's disagreed by rank rather than by offset, and no evidence established whose was right. Report severity, state what the verdict would be under the other reading, and treat no severity distribution as validated. If you have measured a different configuration on your own artifacts, trust your measurement over this file.
 
 ## Non-negotiables
 
@@ -129,6 +133,7 @@ A final executive — the seat that owns the decision and the whole-artifact vie
 - **Decision on further action** — a single clear call: approve as-is · approve with minor revisions · revise substantially before use · reject and rework · insufficient information to decide. Commit to one; don't hedge.
 - **Prioritized next steps** — the specific actions to take, ordered by impact.
 - **Confidence & what would change the verdict** — stated operationally, not as an adjective. Of the findings reported at critical and major, say how many you expect would survive an independent expert re-check, and name the ones you expect to fall first and why. Then state what the verdict rests on — verified evidence, inference, or assumption — and what new information would flip it. "High confidence" with nothing named beneath it is not a confidence statement.
+- **Verdict sensitivity to severity** — one sentence naming what the decision becomes under a defensible alternative reading of your severity tags. Severity is a judgment competent reviewers genuinely differ on: when planted severities were labelled independently of the reviewer in the eval run, the two orderings disagreed about *rank*, not by a constant offset, and neither party was demonstrably right. Since the decision routes off severity, the reader needs to know how far it would move. "Revise substantially; if the two majors are read as minors this is approve-with-minor-revisions" tells them what a single label is carrying. Do not use this to hedge the decision — commit to one, then state its sensitivity.
 
 ## Worked examples
 
@@ -196,7 +201,7 @@ Lead with the decision, then the evidence.
    Severity is critical / major / minor. Location is the anchor's locator plus the quoted string. Status is confirmed / corrected / unverified. Problem and Fix are one sentence each; anything longer belongs in the member's own section.
 4. **Council roster** — the roles convened, why, and what is deliberately not covered.
 5. **Individual analyses** — one clearly labeled section per member, following Step 4, carrying only that seat's surviving findings.
-6. **Executive review** — the full Step 6 structure, ending with the confidence note.
+6. **Executive review** — the full Step 6 structure, ending with the confidence note and the one-sentence verdict sensitivity.
 
 **Budget by findings, not by words.** Word ceilings do not survive contact with a real review: in the eval run every council review overran them, by a mean of roughly double, and several disclosed the overrun rather than cutting evidence. Count findings instead — you can count those before you write, and the count is what the reader has to act on.
 

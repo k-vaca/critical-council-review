@@ -51,19 +51,34 @@ manufactured = C+M findings reported across the three probe artifacts
 
 **Only `code-03-lru-cache.py` is a probe.** `doc-03` and `claim-05` were built as probes and are not: run 1 found real critical-or-major defects in both, some of them introduced by the author while editing. They are reclassified as ordinary defect-carrying artifacts and their ground-truth entries amended. They were **not** patched, so run 1 stays reproducible against the artifacts it actually ran on.
 
-**Before any artifact ships as a probe, it must pass an adversarial pre-check.** Dispatch an agent whose only instruction is to find a critical or major defect in it, with no mention that it is meant to be clean. It ships as a probe only if that pass comes back empty. Intending an artifact to be clean is not evidence that it is; two of three failed that test in run 1 and the failure was invisible until reviewers hit them. Run 2 needs two new probes built and pre-checked this way.
+**Every artifact gets a blind pre-check before it ships. Not just probes.** Dispatch a reviewer that has not seen the defect list and is not told what is planted, and reconcile what it finds against the sealed list. Anything it finds that is not on the list is either an unplanted defect — amend the ground truth — or a false positive, which is itself worth recording.
+
+This was originally scoped to probes only. The adversarial round showed that is not enough. The `adv-01` author wrote a 130-line migration, verified it by re-reading, and correctly concluded that the one check it could not perform on its own work was whether it had left unplanted bugs. The blind reviewer it commissioned found **two real defects it had just checked line by line**, one of which a second independent reader later confirmed.
+
+An author cannot audit their own blind spots by trying harder, and this is the rule that acts on that rather than restating it. Intending an artifact to be clean is not evidence that it is: two of three probes failed that test in run 1, invisibly, until reviewers hit them.
+
+**Artifact hygiene, derived from what the adversarial authors did unprompted and better than the original set was built:**
+
+- Execute the code. Confirm each planted defect actually fires and that the surrounding code behaves correctly under a control run.
+- Re-derive every printed figure with a script, not by eye. Confirm the only mismatches are the planted ones.
+- Sweep for unplanted defects and remove them, or promote them into the ground truth deliberately.
+- Head off the reflex findings. State run lengths, name exclusions, mention the SRM check. A reviewer that can score easy points never reaches the real defect, and the measurement learns nothing.
 
 Target is **zero**. Anything above zero is a direct violation of non-negotiable 1 and it outweighs a recall gain: a review process that invents a critical finding on sound work is worse than one that misses a real one, because the false one costs engineering time and the missed one is usually caught downstream.
 
 Report it as a raw count, not a rate. Three artifacts is too few for a rate to mean anything.
 
-### 4. Severity agreement — not measurable by one author
+### 4. Severity — report it, do not score it
 
-Run 1 recorded 39 findings tagged critical against 21 planted and called it inflation. That conclusion does not hold. The same person wrote the artifacts, chose the planted severities, and graded the outputs. When three independent reviewers rate "binary floats for currency, against a spec line saying the ledger rejects them" as critical and the ground truth says major, the data cannot distinguish reviewer inflation from author deflation.
+Run 1 recorded 39 findings tagged critical against 21 planted and called it inflation. That conclusion did not hold: one person wrote the artifacts, chose the planted severities, and graded the outputs, so the data could not separate reviewer inflation from author deflation.
 
-**Do not report a severity-calibration result until the planted severities have been labelled by someone who did not write the artifacts.** Two labellers, disagreements resolved by a third, labels frozen before any run. Until that exists, record the distributions and draw no conclusion from them.
+The adversarial round supplied the independent labels that were missing, and the answer was not inflation. On `adv-06` the reviewer **deflated** the author's critical to major while **inflating** both of the author's majors to critical. On `adv-04` it raised all three. On `adv-02` a minor came back major. The orderings disagree by **rank, not by a constant offset**, which is the one shape that cannot be calibrated away — and nothing in the run established whose ordering was correct.
 
-Once it exists, of the matched findings only:
+**Severity is a judgment competent parties genuinely differ on. An eval that scores it measures agreement, not correctness.** Treating a reviewer's disagreement with the author's label as reviewer error is a category mistake, and it was the mistake this file made after run 1.
+
+**Score ordering instead.** "If you fix one thing, fix this" is a far more constrained question than "is this critical or major", and it is what the reader of a review actually needs. That is measure 2b, and it is where severity's scoring weight went.
+
+Continue to **record** the severity distributions per arm, because a wild distribution is still diagnostic. Draw no correctness conclusion from them. Of the matched findings, report descriptively only:
 
 Of the matched findings only:
 

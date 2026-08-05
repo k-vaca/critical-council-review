@@ -11,6 +11,12 @@ positives.
 
 ## Defect 1 — currency-blind minor-unit conversion
 
+> **Amended 2026-08-05 after blind pre-check.** Two defects below were not planted by this file's author and were found by independent readers. The author had verified this artifact by re-reading and missed both.
+>
+> **A1 — `CREATE INDEX CONCURRENTLY IF NOT EXISTS` matches on name only.** Severity: **major** (confirmed by two independent readers). After a hard kill during the index build — which the header states is an expected event — a restart finds the leftover INVALID index by name, skips creation, and proceeds. The planner ignores invalid indexes, so every batch falls back to the PK index and rescans an ever-growing completed prefix. The restart degrades toward quadratic and the invalid index keeps consuming write overhead on the hot path until dropped by hand. This breaks the header's stated constraint that a hard kill at any point must be safe to restart from.
+>
+> **A2 — the partial index predicate defeats HOT updates.** Severity: **CONTESTED** — one independent reader rated it major, a second rated it minor. Both agree it is real. The index predicate references `amount_minor`, the very column each backfill UPDATE writes, so HOT eligibility fails and every one of the ~341M updates must insert a new tuple into every index on a ~180 GB table. Recorded as contested rather than resolved, per this eval's position that severity disagreement between competent readers is not settled by adding another vote from the same distribution.
+
 - **Severity**: critical
 - **Location**: line 67, `to_minor_units()` (the `amount * 100`); its call site in
   `backfill()` (line 92); and `SELECT_BATCH` (line 48), which never selects
